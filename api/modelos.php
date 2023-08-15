@@ -100,14 +100,14 @@ class ModeloABM extends Modelo{
             // Agragamos el limite
             $sql .= " LIMIT $this->limit";
         }
-        //echo $sql. '<br>'; // mostramos las instrucciones sql resultante
+        // echo $sql. '<br>'; // mostramos las instrucciones sql resultante
 
         // ejecutamos la consulta y la guardamos en $resultado
         $resultado = $this->_db->query($sql);
         
         //GUARDAMOS LOS DATOS EN UN ARRAY ASOCIATIVO 
         $datos = $resultado->fetch_all(MYSQLI_ASSOC);
-        print_r($datos);
+        //print_r($datos);
         //comvertimos los datos a formato json
         $datos_json = json_encode($datos);
         //print_r($datos_json);
@@ -115,6 +115,50 @@ class ModeloABM extends Modelo{
         // retornamos los datos JSON
         return $datos_json;
 
+    }
+
+    /**
+     * Método de insercion datos 
+     * @param valores los valores a insertar
+     */
+    public function insertar($valores) {
+        // INSERT INTO articulos(codigo, nombre, descripcion, precio, imagen)
+        // VALUES ('201', 'Samsung Galaxy S20', 'Procesador:xxx, Almacenamiento: xxx', '890000', 'Samsung-S20.png)
+        $campos = ''; //variable para almacenar campos
+        $datos = ''; //variable para almacenar datos
+        
+        //recorrer el objeto $valores
+        foreach($valores as $key=>$value){
+            $value ="'".$value."'"; // Agregamos apóstrofe (') antes y después de cada value
+            $campos .= $key.","; // Agregamos en $campos, la $key mas una coma
+            $datos .= $value.","; // Agregamos en $datos, los $value mas una coma
+        }
+        $campos = substr($campos,0,strlen($campos)-1); // Quitamos el último caracter(,) a $campos
+        $datos = substr($datos,0,strlen($datos)-1); // Quitamos el último caracter(,) a $datos
+
+        // instruccion SQL
+        $sql = "INSERT INTO $this->tabla($campos) VALUES($datos)";
+        // echo $sql; // Mostramos la instruccion SQL resultados
+        $this->_db->query($sql); // Ejecutamos la consulta
+    }
+
+    /**
+     * Metodo para actualizar datos
+     * @param valores los valores a actualizar
+     */
+    public function actualizar($valores) {
+        // UPDATE articulos SET campo='valor', campo='valor'... WHERE id=1
+        $sql = "UPDATE $this ->tabla SET ";
+        // recorrer el objeto $valores
+        foreach($valores as $key => $value) {
+            // Agregamos al sql los campos y valores
+            $sql .= $key. "=".$value."',";
+        }
+        $sql = substr($sql,0,strlen($sql)-1); // Quitamos el último caracter(,) a $sql
+        // agregamos el criterio
+        $sql .= " WHERE $this->criterio";
+        echo $sql;  // mostramos el sql resultante
+        $this->_db->query($sql); // ejecutamos la consulta        
     }
 
 }
