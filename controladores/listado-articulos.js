@@ -18,6 +18,13 @@ const inputDescripcion = document.querySelector('#descripcion');
 const inputPrecio = document.querySelector('#precio');
 const inputImagen = document.querySelector('#imagen');
 
+//imagen del formulario
+const frmImagen = document.querySelector("#frmimagen");
+
+// variables
+let accion = '';
+let id;
+
 
 document.addEventListener('DOMContentLoaded', () => {
     mostrarArticulos();
@@ -43,6 +50,12 @@ async function mostrarArticulos() {
                         <h5>$ <span name="spanprecio">${articulo.precio}</span></h5>
                         <input type="number" name="inputcantidad" class="form-control" value="0" min="0" max="30" onchange="calcularPedido()">
                     </div>
+                    <div class"card-footer d-flex justify-content-center">
+                    <a class="btnEditar btn btn-primary">Editar</a>
+                    <a class="btnBorrar btn btn-danger">Eliminar</a>
+                    <input type="hidden" class= "idArticulo" value="${articulo.id}">
+                    <input type="hidden" class= "imagenArticulo" value="${articulo.imagen ?? 'nodisponible.png'}">
+                    </div>
                 </div>
             </div>
 `;
@@ -56,15 +69,30 @@ async function mostrarArticulos() {
 formulario.addEventListener('submit', function (e) {
     e.preventDefault();      // Prevenimos la accion por defecto
     const datos = new FormData(formulario);  // Guardamos los datos del formulario
-    fetch(url + '&accion=insertar', {
-        method: 'POST',
-        body: datos
-    })
-        .then(res => res.json())
-        .then(data => {
-            insertarAlerta(data, 'success');
-            mostrarArticulos();
-        })
+    switch (accion) {
+        case "insertar":
+            fetch(url + '&accion=insertar', {
+                method: 'POST',
+                body: datos
+            })
+                .then(res => res.json())
+                .then(data => {
+                    insertarAlerta(data, 'success');
+                    mostrarArticulos();
+                })
+            break;
+        case "actualizar":
+            fetch(`${url}&accion=insertar&id=${id}`, {
+                method: 'POST',
+                body: datos
+            })
+                .then(res => res.json())
+                .then(data => {
+                    insertarAlerta(data, 'success');
+                    mostrarArticulos();
+                })
+            break;
+    }
 })
 
 /**
@@ -81,6 +109,8 @@ btnNuevo.addEventListener('click', () => {
 
     //mostramos el formulario
     formularioModal.show()
+
+    accion = 'insertar'
 })
 /**
  * Define el mensaje de alerta
@@ -97,3 +127,45 @@ const insertarAlerta = (mensaje, tipo) => {
     `;
     alerta.append(envoltorio);
 }
+
+/**
+ * determina en que elemento se realiza un evento
+ * @parametos elemento el elemento al que se realiza el evento
+ * @parametro evento el evento realizado
+ * @parametro selector el selector seleccionado
+ * @parametro manejador metodo que ejecutamos el evento 
+ */
+const on = (elemento, evento, selector, manejador) => {
+    elemento.addEventListener(evento, e => {
+        if (e.target.closest(selector)) {
+            manejador(e);
+        }
+    })
+}
+
+/**
+ * Ejecuta el clic de btnEditar
+ */
+on(document, 'click', '.btnEditar', e => {
+    const cardFooter = e.target.parentNode; // Elemento padre del boton
+    // Obtener los datos del articulo seleccionado
+    id = cardFooter.querySelector('.idArticulo').value;
+    const codigo = cardFooter.querySelector('span[name=spancodigo]').innerHTML;
+    const nombre = cardFooter.querySelector('span[name=spannombre]').innerHTML;
+    const precio = cardFooter.querySelector('span[name=spanprecio]').innerHTML;
+    const descripcion = cardFooter.querySelector('.card-text').innerHTML;
+    const imagen = cardFooter.querySelector('.imagenArticulo').value;
+
+    //asignamos los valores a los input
+    inputCodigo.value = codigo;
+    inputNombre.value = nombre;
+    inputPrecio.value = Precio;
+    inputDescripcion.value = Descripcion;
+    frmImagen.src = `./imagenes/productos/${imagen}`;
+
+    //mostramos el formulario
+    formularioModal.show();
+
+    accion = 'actualizar';
+
+})

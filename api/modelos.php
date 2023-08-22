@@ -157,7 +157,7 @@ class ModeloABM extends Modelo{
         $sql = substr($sql,0,strlen($sql)-1); // Quitamos el último caracter(,) a $sql
         // agregamos el criterio
         $sql .= " WHERE $this->criterio";
-        echo $sql;  // mostramos el sql resultante
+        //echo $sql;  // mostramos el sql resultante
         $this->_db->query($sql); // ejecutamos la consulta        
     }
 
