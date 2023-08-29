@@ -39,7 +39,7 @@ async function mostrarArticulos() {
         listado.innerHTML += `
             <div class="col">
                 <div class="card" style="width:18rem;">
-                    <img src="imagenes/productos/${articulo.imagen ?? 'nodisponible.png'}" alt=${articulo.nombre} class="card-img-top">
+                    <img src="imagenes/productos/${articulo.imagen ?? 'nodisponible.png'}" alt=${articulo.nombre} class="card-img-top" />
                     <div class="card-body">
                         <h5 class="card-title">
                             <span name="spancodigo">${articulo.codigo}</span> - <span name="spannombre">${articulo.nombre}</span>
@@ -53,8 +53,8 @@ async function mostrarArticulos() {
                     <div class"card-footer d-flex justify-content-center">
                     <a class="btnEditar btn btn-primary">Editar</a>
                     <a class="btnBorrar btn btn-danger">Eliminar</a>
-                    <input type="hidden" class= "idArticulo" value="${articulo.id}">
-                    <input type="hidden" class= "imagenArticulo" value="${articulo.imagen ?? 'nodisponible.png'}">
+                    <input type="hidden" class="idArticulo" value="${articulo.id}">
+                    <input type="hidden" class="imagenArticulo" value="${articulo.imagen ?? 'nodisponible.png'}">
                     </div>
                 </div>
             </div>
@@ -150,17 +150,17 @@ on(document, 'click', '.btnEditar', e => {
     const cardFooter = e.target.parentNode; // Elemento padre del boton
     // Obtener los datos del articulo seleccionado
     id = cardFooter.querySelector('.idArticulo').value;
-    const codigo = cardFooter.querySelector('span[name=spancodigo]').innerHTML;
-    const nombre = cardFooter.querySelector('span[name=spannombre]').innerHTML;
-    const precio = cardFooter.querySelector('span[name=spanprecio]').innerHTML;
-    const descripcion = cardFooter.querySelector('.card-text').innerHTML;
-    const imagen = cardFooter.querySelector('.imagenArticulo').value;
+    const codigo = cardFooter.parentNode.querySelector('span[name=spancodigo]').innerHTML;
+    const nombre = cardFooter.parentNode.querySelector('span[name=spannombre]').innerHTML;
+    const precio = cardFooter.parentNode.querySelector('span[name=spanprecio]').innerHTML;
+    const descripcion = cardFooter.parentNode.querySelector('.card-text').innerHTML;
+    const imagen = cardFooter.parentNode.querySelector('.imagenArticulo').value;
 
     //asignamos los valores a los input
     inputCodigo.value = codigo;
     inputNombre.value = nombre;
-    inputPrecio.value = Precio;
-    inputDescripcion.value = Descripcion;
+    inputPrecio.value = precio;
+    inputDescripcion.value = descripcion;
     frmImagen.src = `./imagenes/productos/${imagen}`;
 
     //mostramos el formulario
@@ -168,4 +168,24 @@ on(document, 'click', '.btnEditar', e => {
 
     accion = 'actualizar';
 
-})
+});
+
+/**
+ * Evento click del boton borrar
+ */
+on(document, 'click', '.btnBorrar', e=> {
+    const cardFooter = e.target.parentNode;
+    id = cardFooter.querySelector('.idArticulo').value;
+    const nombre = cardFooter.parentNode.querySelector("span[name=spannombre]").innerHTML;
+    let aceptar = confirm(`¿Realmente desea eliminar a ${nombre}?`)
+    if(aceptar){
+        console.log(`${nombre} Eliminado`);
+        fetch(`${url}&accion=eliminar&id=${id}`)
+         .then(res => res.json())
+         .then(data =>{
+            insertarAlerta(data, 'danger');
+            mostrarArticulos();
+         });
+    }
+
+});

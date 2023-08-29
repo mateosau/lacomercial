@@ -161,6 +161,17 @@ class ModeloABM extends Modelo{
         $this->_db->query($sql); // ejecutamos la consulta        
     }
 
+  /**
+   * Eliminar un registro
+   */
+  public function eliminar (){
+    // DELETE FROM articulos WHERE id=5
+    $sql = "DELETE FROM $this->tabla WHERE $this->criterio";
+    $this->_db->query($sql); // ejecutamos la consulta
+  }
+
+
+
 }
 
 ?>

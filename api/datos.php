@@ -6,7 +6,7 @@ if (isset($_GET['tabla'])) { // si esta seteado el atributo tabla
     $t = $_GET['tabla'];
     $tabla = new ModeloABM($t);// creamos el objeto $tabla
 
-    if(isset($_GET['ID'])){  // si esta seteado el atributo id
+    if(isset($_GET['id'])){  // si esta seteado el atributo id
         $tabla->set_criterio("id=".$_GET['id']);  // establecemis el criterio
     }
 
@@ -29,6 +29,13 @@ if (isset($_GET['tabla'])) { // si esta seteado el atributo tabla
                     $mensaje .= 'Datos actualizar';             // creamos un mensaje
                     echo json_encode($mensaje);                // mostramos el mensaje
                     break;
+
+                case 'eliminar':                            // EN caso q sea 'eliminar'
+                    $tabla->eliminar();                     // ejecutamos el metodo eliminar
+                    $mensaje = 'Registro eliminado';        // creamos un mensaje
+                    echo json_encode($mensaje);             // mostramos el mensaje
+                    break;
+
         }
     }
 }
