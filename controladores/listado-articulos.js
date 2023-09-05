@@ -79,10 +79,10 @@ formulario.addEventListener('submit', function (e) {
                 .then(data => {
                     insertarAlerta(data, 'success');
                     mostrarArticulos();
-                })
+                });
             break;
         case "actualizar":
-            fetch(`${url}&accion=insertar&id=${id}`, {
+            fetch(`${url}&accion=actualizar&id=${id}`, {
                 method: 'POST',
                 body: datos
             })
@@ -90,7 +90,7 @@ formulario.addEventListener('submit', function (e) {
                 .then(data => {
                     insertarAlerta(data, 'success');
                     mostrarArticulos();
-                })
+                });
             break;
     }
 })
