@@ -9,9 +9,9 @@ if($_POST['usuario'] == '' || $_POST ['password'] == ''){
     $usuario = "'" . $_POST['usuario'] . "'";
     $password = "'" . $_POST['password'] . "'";
 
-    $usuario = new ModeloABM('clientes');
-    $usuario->set_criterio("usuario=$usuario AND password=$password");
-    $datos = $usuario->seleccionar();
+    $usuarios = new ModeloABM('clientes');
+    $usuarios->set_criterio("usuario=$usuario AND password=$password");
+    $datos = $usuarios->seleccionar();
     if(count(json_decode($datos)) == 0 ){
         $mensaje .= "el usuario o la contraseña no coinciden<br>";
         echo json_decode($mensaje);
